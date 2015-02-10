@@ -1,0 +1,24 @@
+{
+  "name": "async-click",
+  "version": "0.1.0",
+  "authors": [
+    "W3Max"
+  ],
+  "description": "async-click",
+  "main": "src/async-click.js",
+  "moduleType": [
+    "amd"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.1.3",
+    "knockout": "^3.2.0"
+  }
+}
