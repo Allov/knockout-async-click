@@ -6,6 +6,14 @@ define(['knockout', 'jquery', './async-click-state'], function(ko, $, asyncClick
     ko.bindingHandlers['asyncClick'] = {
         'init': function(element, valueAccessor, allBindings, viewModel, bindingContext) {
             var handlerFunction = valueAccessor() || {};
+            var $element = $(element);
+
+            asyncClickState.asyncTask.subscribe(function() {
+                ko.bindingHandlers['disable']['update'].call(this, element,
+                    function() {
+                        return asyncClickState.asyncTask();
+                    }, allBindings, viewModel, bindingContext);
+            });
 
             ko.utils.registerEventHandler(element, 'click', function(event) {
                 var handlerReturnValue;
@@ -14,17 +22,27 @@ define(['knockout', 'jquery', './async-click-state'], function(ko, $, asyncClick
 
                 try {
                     // Take all the event args, and prefix with the viewmodel
-                    var argsForHandler = ko.utils.makeArray(arguments);
+                    var argsForHandler = makeArray(arguments);
                     viewModel = bindingContext['$data'];
                     argsForHandler.unshift(viewModel);
+                    var originalHtml = $element.html();
+                    var asyncClickHtml = allBindings.get('asyncClickHtml');
+
                     handlerReturnValue = handlerFunction.apply(viewModel, argsForHandler);
 
-                    if ($.isFunction(handlerReturnValue)) {
-                        asyncClickState.asyncTask(handlerReturnValue);
-                        handlerReturnValue.always(function() {
-                            asyncClickState.asyncTask(null);
-                        });
+                    if (asyncClickHtml) {
+                        $element.html(asyncClickHtml);
                     }
+
+                    asyncClickState.asyncTask(handlerReturnValue);
+                    
+                    handlerReturnValue.always(function() {
+                        if (asyncClickHtml) {
+                            $element.html(originalHtml);
+                        }
+
+                        asyncClickState.asyncTask(null);
+                    });
                 } finally {
                     //Par convention...
                     event.preventDefault();
@@ -40,4 +58,14 @@ define(['knockout', 'jquery', './async-click-state'], function(ko, $, asyncClick
             });
         }
     };
+
+    function makeArray(arrayLikeObject) {
+        var result = [];
+
+        for (var i = 0, j = arrayLikeObject.length; i < j; i++) {
+            result.push(arrayLikeObject[i]);
+        }
+
+        return result;
+    }
 });
