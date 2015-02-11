@@ -1,19 +1,19 @@
 {
-  "name": "async-click",
+  "name": "knockout-async-click",
   "version": "0.1.0",
   "description": "",
-  "main": "src/async-click.js",
+  "main": "src/knockout-async-click.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/W3Max/async-click.git"
+    "url": "https://github.com/W3Max/knockout-async-click.git"
   },
   "author": "W3Max",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/W3Max/async-click/issues"
+    "url": "https://github.com/W3Max/knockout-async-click/issues"
   },
-  "homepage": "https://github.com/W3Max/async-click"
+  "homepage": "https://github.com/W3Max/knockout-async-click"
 }

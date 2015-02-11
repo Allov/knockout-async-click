@@ -1,11 +1,11 @@
 {
-  "name": "async-click",
+  "name": "knockout-async-click",
   "version": "0.1.0",
   "authors": [
     "W3Max"
   ],
-  "description": "async-click",
-  "main": "src/async-click.js",
+  "description": "knockout-async-click",
+  "main": "src/knockout-async-click.js",
   "moduleType": [
     "amd"
   ],
