@@ -1,4 +1,4 @@
-define(['knockout', 'jquery', './async-click-state'], function(ko, $, asyncClickState) {
+define(['knockout', 'jquery', 'async-click-state'], function(ko, $, asyncClickState) {
     'use strict';
 
     //TODO: (?) Suporter scénario comme https://github.com/knockout/knockout/blob/master/src/binding/defaultBindings/event.js
