@@ -6,6 +6,10 @@ define(['jquery', 'knockout'],
             var self = this;
 
             self.asyncTask = ko.observable(null);
+
+            self.isBusy = ko.pureComputed(function(){
+                return !!self.asyncTask();
+            });
         };
 
         // AsyncClick.prototype.xyz = function() {
