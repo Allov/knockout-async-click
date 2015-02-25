@@ -28,12 +28,11 @@ define(['knockout', 'jquery', 'async-click-state'], function(ko, $, asyncClickSt
                     var originalHtml = $element.html();
                     var asyncClickHtml = allBindings.get('asyncClickHtml');
 
-                    handlerReturnValue = handlerFunction.apply(viewModel, argsForHandler);
-
                     if (asyncClickHtml) {
                         $element.html(asyncClickHtml);
                     }
 
+                    handlerReturnValue = handlerFunction.apply(viewModel, argsForHandler);
                     asyncClickState.asyncTask(handlerReturnValue);
                     
                     handlerReturnValue.always(function() {
