@@ -1,5 +1,11 @@
-define(['knockout', 'jquery', 'async-click-state'], function(ko, $, asyncClickState) {
+define([
+    'knockout',
+    'jquery',
+    'async-click-state'
+], function(ko, $, asyncClickState) {
     'use strict';
+
+    //var handlerId = 0;
 
     //TODO: (?) Suporter scénario comme https://github.com/knockout/knockout/blob/master/src/binding/defaultBindings/event.js
     //http://knockoutjs.com/documentation/event-binding.html
@@ -7,16 +13,19 @@ define(['knockout', 'jquery', 'async-click-state'], function(ko, $, asyncClickSt
         'init': function(element, valueAccessor, allBindings, viewModel, bindingContext) {
             var handlerFunction = valueAccessor() || {};
             var $element = $(element);
+            //var clickHandlerId = getClickHandlerId();
+            var clickHandlerId = 'click';
 
-            asyncClickState.asyncTask.subscribe(function() {
+           var subscription =  asyncClickState.asyncTask.subscribe(function() {
                 ko.bindingHandlers['disable']['update'].call(this, element,
                     function() {
                         return asyncClickState.asyncTask();
                     }, allBindings, viewModel, bindingContext);
             });
 
-            ko.utils.registerEventHandler(element, 'click', function(event) {
+            $element.on(clickHandlerId, function(event) {
                 var handlerReturnValue;
+
                 if (!handlerFunction || asyncClickState.asyncTask())
                     return;
 
@@ -34,7 +43,7 @@ define(['knockout', 'jquery', 'async-click-state'], function(ko, $, asyncClickSt
 
                     handlerReturnValue = handlerFunction.apply(viewModel, argsForHandler);
                     asyncClickState.asyncTask(handlerReturnValue);
-                    
+
                     handlerReturnValue.always(function() {
                         if (asyncClickHtml) {
                             $element.html(originalHtml);
@@ -48,15 +57,26 @@ define(['knockout', 'jquery', 'async-click-state'], function(ko, $, asyncClickSt
                 }
 
                 var bubble = allBindings.get('asyncClickBubble') !== false;
+
                 if (!bubble) {
                     event.cancelBubble = true;
+
                     if (event.stopPropagation) {
                         event.stopPropagation();
                     }
                 }
             });
+
+            ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+                subscription.dispose();
+                $element.off(clickHandlerId);
+            });
         }
     };
+
+    // function getClickHandlerId() {
+    //     return 'click.ko.clickHandler' + (++handlerId);
+    // }
 
     function makeArray(arrayLikeObject) {
         var result = [];
