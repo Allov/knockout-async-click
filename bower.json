@@ -1,11 +1,10 @@
 {
-  "name": "knockout-async-click",
-  "version": "0.1.0",
+  "name": "koco-async-click",
+  "version": "0.2.0",
   "authors": [
-    "W3Max"
+    "Maxime Séguin"
   ],
-  "description": "knockout-async-click",
-  "main": "src/knockout-async-click.js",
+  "description": "",
   "moduleType": [
     "amd"
   ],

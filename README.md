@@ -1,1 +1,1 @@
-# knockout-async-click (knockout binding handler)
+# koco-async-click (knockout binding handler)
