@@ -1,6 +1,3 @@
-// Copyright (c) CBC/Radio-Canada. All rights reserved.
-// Licensed under the MIT license. See LICENSE file in the project root for full license information.
-
 define([
     'knockout',
     'jquery',
@@ -19,11 +16,8 @@ define([
             //var clickHandlerId = getClickHandlerId();
             var clickHandlerId = 'click';
 
-           var subscription =  asyncClickState.asyncTask.subscribe(function() {
-                ko.bindingHandlers['disable']['update'].call(this, element,
-                    function() {
-                        return asyncClickState.asyncTask();
-                    }, allBindings, viewModel, bindingContext);
+            ko.applyBindingsToNode(element, {
+                safeClick: {}
             });
 
             $element.on(clickHandlerId, function(event) {
@@ -71,7 +65,6 @@ define([
             });
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                subscription.dispose();
                 $element.off(clickHandlerId);
             });
         }
