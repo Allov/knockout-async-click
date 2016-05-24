@@ -1,86 +1,83 @@
-define([
-    'knockout',
-    'jquery',
-    'async-click-state'
-], function(ko, $, asyncClickState) {
-    'use strict';
+import ko from 'knockout';
+import $ from 'jquery';
+import asyncClickState from 'async-click-state';
 
-    //var handlerId = 0;
 
-    //TODO: (?) Suporter scénario comme https://github.com/knockout/knockout/blob/master/src/binding/defaultBindings/event.js
-    //http://knockoutjs.com/documentation/event-binding.html
-    ko.bindingHandlers['asyncClick'] = {
-        'init': function(element, valueAccessor, allBindings, viewModel, bindingContext) {
-            var handlerFunction = valueAccessor() || {};
-            var $element = $(element);
-            //var clickHandlerId = getClickHandlerId();
-            var clickHandlerId = 'click';
+//var handlerId = 0;
 
-            ko.applyBindingsToNode(element, {
-                safeClick: {}
-            });
+//TODO: (?) Suporter scénario comme https://github.com/knockout/knockout/blob/master/src/binding/defaultBindings/event.js
+//http://knockoutjs.com/documentation/event-binding.html
+ko.bindingHandlers['asyncClick'] = {
+    'init': function(element, valueAccessor, allBindings, viewModel, bindingContext) {
+        var handlerFunction = valueAccessor() || {};
+        var $element = $(element);
+        //var clickHandlerId = getClickHandlerId();
+        var clickHandlerId = 'click';
 
-            $element.on(clickHandlerId, function(event) {
-                var handlerReturnValue;
+        ko.applyBindingsToNode(element, {
+            safeClick: {}
+        });
 
-                if (!handlerFunction || asyncClickState.asyncTask())
-                    return;
+        $element.on(clickHandlerId, function(event) {
+            var handlerReturnValue;
 
-                try {
-                    // Take all the event args, and prefix with the viewmodel
-                    var argsForHandler = makeArray(arguments);
-                    viewModel = bindingContext['$data'];
-                    argsForHandler.unshift(viewModel);
-                    var originalHtml = $element.html();
-                    var asyncClickHtml = allBindings.get('asyncClickHtml');
+            if (!handlerFunction || asyncClickState.asyncTask())
+                return;
 
+            try {
+                // Take all the event args, and prefix with the viewmodel
+                var argsForHandler = makeArray(arguments);
+                viewModel = bindingContext['$data'];
+                argsForHandler.unshift(viewModel);
+                var originalHtml = $element.html();
+                var asyncClickHtml = allBindings.get('asyncClickHtml');
+
+                if (asyncClickHtml) {
+                    $element.html(asyncClickHtml);
+                }
+
+                handlerReturnValue = handlerFunction.apply(viewModel, argsForHandler);
+                asyncClickState.asyncTask(handlerReturnValue);
+
+                handlerReturnValue.always(function() {
                     if (asyncClickHtml) {
-                        $element.html(asyncClickHtml);
+                        $element.html(originalHtml);
                     }
 
-                    handlerReturnValue = handlerFunction.apply(viewModel, argsForHandler);
-                    asyncClickState.asyncTask(handlerReturnValue);
+                    asyncClickState.asyncTask(null);
+                });
+            } finally {
+                //Par convention...
+                event.preventDefault();
+            }
 
-                    handlerReturnValue.always(function() {
-                        if (asyncClickHtml) {
-                            $element.html(originalHtml);
-                        }
+            var bubble = allBindings.get('asyncClickBubble') !== false;
 
-                        asyncClickState.asyncTask(null);
-                    });
-                } finally {
-                    //Par convention...
-                    event.preventDefault();
+            if (!bubble) {
+                event.cancelBubble = true;
+
+                if (event.stopPropagation) {
+                    event.stopPropagation();
                 }
+            }
+        });
 
-                var bubble = allBindings.get('asyncClickBubble') !== false;
-
-                if (!bubble) {
-                    event.cancelBubble = true;
-
-                    if (event.stopPropagation) {
-                        event.stopPropagation();
-                    }
-                }
-            });
-
-            ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
-                $element.off(clickHandlerId);
-            });
-        }
-    };
-
-    // function getClickHandlerId() {
-    //     return 'click.ko.clickHandler' + (++handlerId);
-    // }
-
-    function makeArray(arrayLikeObject) {
-        var result = [];
-
-        for (var i = 0, j = arrayLikeObject.length; i < j; i++) {
-            result.push(arrayLikeObject[i]);
-        }
-
-        return result;
+        ko.utils.domNodeDisposal.addDisposeCallback(element, function() {
+            $element.off(clickHandlerId);
+        });
     }
-});
+};
+
+// function getClickHandlerId() {
+//     return 'click.ko.clickHandler' + (++handlerId);
+// }
+
+function makeArray(arrayLikeObject) {
+    var result = [];
+
+    for (var i = 0, j = arrayLikeObject.length; i < j; i++) {
+        result.push(arrayLikeObject[i]);
+    }
+
+    return result;
+}

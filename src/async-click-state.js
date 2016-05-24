@@ -1,21 +1,20 @@
-define(['jquery', 'knockout'],
-    function($, ko) {
-        'use strict';
+import $ from 'jquery';
+import ko from 'knockout';
 
-        var AsyncClickState = function() {
-            var self = this;
 
-            self.asyncTask = ko.observable(null);
+var AsyncClickState = function() {
+    var self = this;
 
-            self.isBusy = ko.pureComputed(function(){
-                return !!self.asyncTask();
-            });
-        };
+    self.asyncTask = ko.observable(null);
 
-        // AsyncClick.prototype.xyz = function() {
-        //     var self = this;
-
-        // };
-
-        return new AsyncClickState();
+    self.isBusy = ko.pureComputed(function() {
+        return !!self.asyncTask();
     });
+};
+
+// AsyncClick.prototype.xyz = function() {
+//     var self = this;
+
+// };
+
+export default new AsyncClickState();
