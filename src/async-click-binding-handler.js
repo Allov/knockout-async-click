@@ -39,7 +39,9 @@ ko.bindingHandlers['asyncClick'] = {
                 handlerReturnValue = handlerFunction.apply(viewModel, argsForHandler);
                 asyncClickState.asyncTask(handlerReturnValue);
 
-                handlerReturnValue.always(function() {
+                handlerReturnValue
+                .catch(ex => {});
+                .then(function() {
                     if (asyncClickHtml) {
                         $element.html(originalHtml);
                     }
